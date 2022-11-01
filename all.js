@@ -14513,7 +14513,10 @@ function getSkillTotal(){
     // console.log(obj);
     // console.log(result);
     // console.log(result[0]['接案公司']['工作經驗1 年以下平均滿意度分']);
+    // return result;
+
     return result;
 }
 
 console.log(getSkillTotal());
+
