@@ -14430,63 +14430,6 @@ let data = [
     },
     },
     ]
-
-let proto = []
-let typeNum =0
-let stars = 0
-let result;
-
-let finalResult = [
-    {
-        '教育產業':{
-            "工作經驗1年以下":{
-                '總人數': 100,
-                '滿意度總和': 1000,
-            },
-            "工作經驗2~3年以下":{
-                '總人數': 100,
-                "滿意度總和": 1000,
-            }
-        }
-    }
-]
-
-let typeYear =[]
-data.forEach(function(item){
-    if((typeYear.indexOf( item.company.job_tenure))===-1){
-        typeYear.push(item.company.job_tenure)
-    }
-})
-console.log(typeYear);
-
-data.forEach(function(item){
-    if(item.company.industry === '接案公司'&&item.company.job_tenure==='1 年以下'){
-        typeNum++
-        stars += Number(item.company.salary_score)
-    }
-    result = stars/typeNum;
-})
-console.log(typeNum);
-console.log(stars);
-console.log(result);
-
-// const obj = {}
-// undefined
-// obj.教育產業
-// undefined
-// if(obj['教育產業']== undefined){
-
-//     obj['教育產業']=1;
-// }else{
-//  obj['教育產業']+=1;
-    
-// }
-// 1
-
-
-// input 輸入
-// getSkillTotal()
-
 // output 範例輸出格式
 // [
 //     {
@@ -14502,4 +14445,75 @@ console.log(result);
 //        "工作經驗2~3年以下平均滿意度分數":7.5,
 //        ...全數列出
 //      }
-//     }
+//  ]
+
+function getSkillTotal(){
+    //newData 1
+    let newData = []
+    data.forEach(function(item){
+        if(newData[item.company.industry]== undefined){
+            newData[item.company.industry]={}
+        }
+        if(newData[item.company.industry][item.company.job_tenure]==undefined){
+            newData[item.company.industry][item.company.job_tenure]={
+                總人數:1,
+                滿意度總和: Number(item.company.salary_score)
+            }
+        }else{
+            newData[item.company.industry][item.company.job_tenure]['總人數']+= 1;
+            newData[item.company.industry][item.company.job_tenure]['滿意度總和']+= Number(item.company.salary_score);
+        }
+    })
+    // console.log(newData);
+    
+    
+    //result push[工作類型]
+    let result = [];
+    let typeAry = []
+    data.forEach(function(item){
+        if(typeAry.indexOf(item.company.industry)===-1){
+            typeAry.push(item.company.industry)
+        }
+    })
+    // console.log(typeAry);
+    
+    for(i=0;i<typeAry.length;i++){
+        let obj ={
+            [typeAry[i]]:{}
+        }
+        result.push(obj)
+    }
+    
+    // 將result.forEach 向result[i][item.company.industy]添加'不同工作經驗'年份之平均滿意度 2
+    let obj ={} //這邊的obj其實只起到減少迭代的次數(從481次降低至127次)
+    data.forEach(function(item){
+        let people = newData[item.company.industry][item.company.job_tenure]['總人數']
+        let salaryTotal = newData[item.company.industry][item.company.job_tenure]['滿意度總和']
+    
+    
+        if(obj[item.company.industry]===undefined){
+            obj[item.company.industry]={};
+        }
+        if(obj[item.company.industry][item.company.job_tenure]===undefined){
+            obj[item.company.industry][item.company.job_tenure]={};
+            result.forEach(function(item2){
+                if(item2[item.company.industry]){
+                    if(item.company.job_tenure===''){
+                        //有少數人沒有填寫工作經驗年數
+                    }else{
+                        item2[item.company.industry][`工作經驗${item.company.job_tenure}平均滿意度分`]= Number((salaryTotal/people).toFixed(1))
+                        // 四捨五入取自小數點第一位,Number將0去除
+                    }
+                }
+            })
+            // console.log('次數測試');
+        }
+    })
+    // 測試
+    // console.log(obj);
+    // console.log(result);
+    // console.log(result[0]['接案公司']['工作經驗1 年以下平均滿意度分']);
+    return result;
+}
+
+console.log(getSkillTotal());
